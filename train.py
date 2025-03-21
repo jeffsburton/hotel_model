@@ -15,6 +15,12 @@ import random
 import classifier
 from classifier import makeParameters
 
+
+
+# Base path to save images and JSON
+BASE_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "casino_floors")
+MODEL_PATH = os.path.join(BASE_PATH, "models")
+
 excluded_rooms = [5, 15, 20, 21, 22, 42, 54, 61, 64, 89, 100, 102, 111, 13, 131, 133, 152, 146, 26, 29, 32, 33, 40, 45, 65, 77, 104, 128, 138, 154]
 
 EPOCHS=30
@@ -291,9 +297,7 @@ def main():
 
 
     # Create train/val splits
-    data_root = 'C:/hotel-id/casino_floors'  # Replace with your data path
-
-    trainingSamples, validationSamples, testSamples = gatherData(data_root)
+    trainingSamples, validationSamples, testSamples = gatherData(BASE_PATH)
 
 
     # Device configuration
@@ -363,9 +367,9 @@ def main():
         'val_losses': val_losses,
         'train_accuracies': train_accuracies,
         'val_accuracies': val_accuracies
-    }, 'models/final_model.pth')
+    }, MODEL_PATH)
 
-    with open('models/test_samples.json', 'w') as f:
+    with open(MODEL_PATH, 'w') as f:
         json.dump(testSamples, f, indent=4)
 
 
