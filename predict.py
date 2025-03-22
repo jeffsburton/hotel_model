@@ -32,7 +32,7 @@ def create_transform():
 def main():
     # Load model
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    checkpoint = torch.load(MODEL_PATH + '/final_model.pth')
+    checkpoint = torch.load(MODEL_PATH + '/best_model.pth')
     model = RoomClassifier(num_classes=get_num_classes_from_checkpoint(checkpoint))  # Initialize your classifier
     model.load_state_dict(checkpoint['model_state_dict'])
     model = model.to(device)

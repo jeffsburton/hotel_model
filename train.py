@@ -20,6 +20,7 @@ from classifier import makeParameters
 # Base path to save images and JSON
 BASE_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "casino_floors")
 MODEL_PATH = os.path.join(BASE_PATH, "models")
+os.makedirs(MODEL_PATH, exist_ok=True)
 
 excluded_rooms = [5, 15, 20, 21, 22, 42, 54, 61, 64, 89, 100, 102, 111, 13, 131, 133, 152, 146, 26, 29, 32, 33, 40, 45, 65, 77, 104, 128, 138, 154]
 
@@ -218,7 +219,7 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, num_epoch
                 'model_state_dict': model.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
                 'val_acc': val_acc,
-            }, 'models/best_model.pth')
+            }, MODEL_PATH + '/best_model.pth')
 
 
 
@@ -235,7 +236,7 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, num_epoch
                 'model_state_dict': model.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
                 'val_acc': val_acc,
-            }, 'best_model.pth')
+            }, MODEL_PATH + '/best_model.pth')
         else:
             patience_counter += 1
 
@@ -319,6 +320,10 @@ def main():
     num_classes = len(train_dataset.room_to_idx)
     model = classifier.RoomClassifier(num_classes).to(device)
 
+    # dump the mapping
+    with open(MODEL_PATH + "/room_mapping.json", 'w') as f:
+        json.dump(train_dataset.idx_to_room, f, indent=4);
+
     # Similar parameter groups but with slightly adjusted learning rates
 
 
@@ -367,9 +372,9 @@ def main():
         'val_losses': val_losses,
         'train_accuracies': train_accuracies,
         'val_accuracies': val_accuracies
-    }, MODEL_PATH)
+    }, MODEL_PATH + '/best_model.pth')
 
-    with open(MODEL_PATH, 'w') as f:
+    with open(MODEL_PATH + "/test_samples.json", 'w') as f:
         json.dump(testSamples, f, indent=4)
 
 
